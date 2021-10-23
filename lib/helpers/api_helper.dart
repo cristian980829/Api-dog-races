@@ -32,4 +32,25 @@ class ApiHelper {
 
     return Response(isSuccess: true, result: list);
   }
+
+  static Future<Response> getDogImages(String race) async {
+    var url = Uri.parse('${Constans.apiUrl}/api/breed/${race}/images');
+    var response = await http.get(
+      url,
+      headers: {
+        'content-type': 'application/json',
+        'accept': 'application/json',
+      },
+    );
+    var body = response.body;
+    if (response.statusCode >= 400) {
+      return Response(isSuccess: false, message: body);
+    }
+
+    List list = [];
+    var decodedJson = jsonDecode(body);
+    list = decodedJson['message'];
+
+    return Response(isSuccess: true, result: list);
+  }
 }

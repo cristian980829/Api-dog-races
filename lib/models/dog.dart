@@ -1,14 +1,14 @@
 class Dog {
   String name = '';
   List type = [];
-  String img = '';
+  List images = [];
 
-  Dog({required this.name, required this.type, required this.img});
+  Dog({required this.name, required this.type, required this.images});
 
   Dog.fromJson(String _name, List _type) {
     name = _name;
     type = _type;
-    img = '';
+    images = [];
   }
 
   // Map<String, dynamic> toJson() {

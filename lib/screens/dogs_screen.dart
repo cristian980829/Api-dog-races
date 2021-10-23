@@ -1,6 +1,7 @@
 import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:examen_api/models/dog.dart';
+import 'package:examen_api/screens/dog_Info_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:examen_api/helpers/api_helper.dart';
 import 'package:examen_api/models/response.dart';
@@ -35,10 +36,6 @@ class _DogsScreenState extends State<DogsScreen> {
       ),
       body: Center(
         child: _getContent(),
-      ),
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.add),
-        onPressed: () => _goAdd(),
       ),
     );
   }
@@ -100,8 +97,7 @@ class _DogsScreenState extends State<DogsScreen> {
         children: _dogs.map((e) {
           return Card(
             child: InkWell(
-              // onTap: () => _goEdit(e),
-              onTap: () => _goEdit(),
+              onTap: () => _goDogDetails(e),
               child: Container(
                 margin: EdgeInsets.all(10),
                 padding: EdgeInsets.all(5),
@@ -194,30 +190,11 @@ class _DogsScreenState extends State<DogsScreen> {
     Navigator.of(context).pop();
   }
 
-  void _goAdd() async {
-    // String? result = await Navigator.push(
-    //     context,
-    //     MaterialPageRoute(
-    //         builder: (context) => BrandScreen(
-    //               token: widget.token,
-    //               brand: Brand(description: '', id: 0),
-    //             )));
+  void _goDogDetails(Dog dog) async {
+    String? result = await Navigator.push(context,
+        MaterialPageRoute(builder: (context) => DogInfoScreen(dog: dog)));
     // if (result == 'yes') {
-    //   _getBrands();
-    // }
-  }
-
-  void _goEdit() async {
-    // void _goEdit(Brand brand) async {
-    // String? result = await Navigator.push(
-    //     context,
-    //     MaterialPageRoute(
-    //         builder: (context) => BrandScreen(
-    //               token: widget.token,
-    //               brand: brand,
-    //             )));
-    // if (result == 'yes') {
-    //   _getBrands();
+    //   _getUsers();
     // }
   }
 }

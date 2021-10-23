@@ -36,6 +36,8 @@ dependencies:
   http: ^0.13.3
   connectivity: ^3.0.6
   adaptive_dialog: ^1.1.0
+  cached_network_image: ^3.1.0
+  card_swiper: ^1.0.4
 
 dev_dependencies:
   flutter_test:
