@@ -29,7 +29,7 @@ class _DogsScreenState extends State<DogsScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Color(0xFF00897B),
-        title: Text('Raxas de perros'),
+        title: Text('Razas de perros'),
         actions: <Widget>[
           _isFiltered
               ? IconButton(
