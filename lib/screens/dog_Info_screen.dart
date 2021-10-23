@@ -1,6 +1,7 @@
 import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:card_swiper/card_swiper.dart';
 import 'package:connectivity/connectivity.dart';
+import 'package:examen_api/components/loader_component.dart';
 import 'package:examen_api/helpers/api_helper.dart';
 import 'package:examen_api/models/dog.dart';
 import 'package:examen_api/models/response.dart';
@@ -18,6 +19,7 @@ class DogInfoScreen extends StatefulWidget {
 
 class _DogInfoScreenState extends State<DogInfoScreen> {
   late Dog _dog;
+  bool _showLoader = false;
 
   @override
   void initState() {
@@ -31,17 +33,27 @@ class _DogInfoScreenState extends State<DogInfoScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Color(0xFF00897B),
         title: Text(_dog.name),
       ),
       body: Center(
-        child: _getContent(),
+        child: _showLoader
+            ? LoaderComponent(text: 'Por favor espere...')
+            : _getContent(),
       ),
     );
   }
 
   Future<Null> _getDog() async {
+    setState(() {
+      _showLoader = true;
+    });
+
     var connectivityResult = await Connectivity().checkConnectivity();
     if (connectivityResult == ConnectivityResult.none) {
+      setState(() {
+        _showLoader = false;
+      });
       await showAlertDialog(
           context: context,
           title: 'Error',
@@ -53,6 +65,11 @@ class _DogInfoScreenState extends State<DogInfoScreen> {
     }
 
     Response response = await ApiHelper.getDogImages(_dog.name);
+
+    setState(() {
+      _showLoader = false;
+    });
+
     _dog.images = response.result;
 
     if (!response.isSuccess) {
@@ -76,6 +93,7 @@ class _DogInfoScreenState extends State<DogInfoScreen> {
     return Column(
       children: <Widget>[
         _showDogInfo(),
+        _showTitle(),
         Expanded(
           child: _dog.type.length == 0 ? _noContent() : _getListView(),
         ),
@@ -155,10 +173,8 @@ class _DogInfoScreenState extends State<DogInfoScreen> {
           dog.name = 'swiper-${dog.name}';
 
           return GestureDetector(
-            onTap: () =>
-                Navigator.pushNamed(context, 'details', arguments: dog),
             child: Hero(
-              tag: dog.name!,
+              tag: dog.name,
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(20),
                 child: FadeInImage(
@@ -170,6 +186,43 @@ class _DogInfoScreenState extends State<DogInfoScreen> {
             ),
           );
         },
+      ),
+    );
+  }
+
+  Widget _showTitle() {
+    return Container(
+      margin: EdgeInsets.all(10),
+      padding: EdgeInsets.all(5),
+      child: Row(
+        children: <Widget>[
+          Expanded(
+            child: Container(
+              margin: EdgeInsets.symmetric(horizontal: 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: <Widget>[
+                        Row(
+                          children: <Widget>[
+                            Text('Tipos de esta raza: ',
+                                style: TextStyle(fontWeight: FontWeight.bold)),
+                          ],
+                        ),
+                        SizedBox(
+                          height: 5,
+                        )
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

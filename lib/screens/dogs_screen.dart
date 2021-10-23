@@ -1,5 +1,6 @@
 import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:connectivity/connectivity.dart';
+import 'package:examen_api/components/loader_component.dart';
 import 'package:examen_api/models/dog.dart';
 import 'package:examen_api/screens/dog_Info_screen.dart';
 import 'package:flutter/material.dart';
@@ -15,6 +16,7 @@ class _DogsScreenState extends State<DogsScreen> {
   List<Dog> _dogs = [];
   bool _isFiltered = false;
   String _search = '';
+  bool _showLoader = false;
 
   @override
   void initState() {
@@ -26,6 +28,7 @@ class _DogsScreenState extends State<DogsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Color(0xFF00897B),
         title: Text('Perros'),
         actions: <Widget>[
           _isFiltered
@@ -35,14 +38,23 @@ class _DogsScreenState extends State<DogsScreen> {
         ],
       ),
       body: Center(
-        child: _getContent(),
+        child: _showLoader
+            ? LoaderComponent(text: 'Por favor espere...')
+            : _getContent(),
       ),
     );
   }
 
   Future<Null> _getDogs() async {
+    setState(() {
+      _showLoader = true;
+    });
+
     var connectivityResult = await Connectivity().checkConnectivity();
     if (connectivityResult == ConnectivityResult.none) {
+      setState(() {
+        _showLoader = false;
+      });
       await showAlertDialog(
           context: context,
           title: 'Error',
@@ -54,6 +66,10 @@ class _DogsScreenState extends State<DogsScreen> {
     }
 
     Response response = await ApiHelper.getDogsList();
+
+    setState(() {
+      _showLoader = false;
+    });
 
     if (!response.isSuccess) {
       await showAlertDialog(
